@@ -1,4 +1,4 @@
-# 🏢 Prediksi Harga Sewa Apartemen [Ahmad Radesta]
+# Sistem Rekomendasi Handphone[Ahmad Radesta]
 
 Proyek ini bertujuan untuk membangun sebuah sistem rekomendasi ponsel pintar berbasis data yang dapat membantu pengguna dalam memilih perangkat yang paling sesuai dengan preferensi dan kebutuhan mereka. Dengan memanfaatkan pendekatan Content-Based Filtering dan Collaborative Filtering, sistem ini dirancang untuk memberikan saran yang bersifat personal, relevan, dan informatif.
 
@@ -95,9 +95,57 @@ Ketiga dataset ini saling terhubung:
 - `cellphones ratings.csv` mengaitkan pengguna (`user_id`) dan produk (`cellphone_id`) melalui rating.
 - `cellphones users.csv` dapat dimanfaatkan untuk segmentasi atau rekomendasi berbasis demografi.
 - `cellphones data.csv` menyediakan fitur deskriptif untuk diterapkan pada Content-Based Filtering.
+---
 
 ![Distribusi Rating Pengguna terhadap Ponsel](ratingPengguna.png)
+Grafik di atas menunjukkan distribusi frekuensi nilai rating yang diberikan oleh pengguna terhadap berbagai ponsel.
 
+- Skala rating berkisar dari **1 hingga 10**, dengan satu outlier di **18** yang kemungkinan merupakan data tidak valid.
+- Rating paling banyak diberikan pada:
+  - **8** (hampir 200 pengguna)
+  - **7 dan 10**
+- Nilai rating rendah (1–4) lebih jarang diberikan.
+
+> 📌 **Insight**:
+> - Pengguna cenderung memberikan **rating tinggi** pada ponsel yang mereka gunakan.
+> - Perlu dilakukan **penanganan terhadap nilai anomali**, seperti rating `18`.
+
+![Distribusi Usia Pengguna](distribusiUsia.png)Grafik di atas menunjukkan distribusi usia dari pengguna yang memberikan rating terhadap ponsel.
+
+Mayoritas pengguna berusia 25 hingga 35 tahun, dengan puncaknya sekitar 30 tahun.
+Distribusi memiliki kemiringan ke kanan (right-skewed) — menandakan lebih sedikit pengguna yang berusia di atas 40 tahun.
+Terdapat pengguna dengan usia hingga 60 tahun, meskipun dalam jumlah kecil.
+
+![Distribusi Harga Ponsel](distribusiHarga.png)
+Grafik di atas menunjukkan distribusi harga ponsel dalam dataset, dalam satuan USD.
+
+-Sebagian besar ponsel berada dalam rentang harga  100hingga 600.
+-Distribusi bersifat right-skewed (positif) — menandakan sebagian kecil ponsel berada di kelas premium (di atas  1000).
+−Terdapatsedikitponseldenganhargasangattinggi,misalnya∗∗ 1750 hingga $2000**, yang merupakan flagship atau high-end devices.
+
+
+![Jumlah Produk per brand](jumlahProduk.png)
+Grafik di atas menunjukkan jumlah produk (ponsel) yang tersedia pada dataset berdasarkan merek.
+
+Samsung merupakan brand dengan jumlah produk terbanyak (8 produk), diikuti oleh:
+Apple (6 produk)
+Motorola, OnePlus, dan Xiaomi (masing-masing 4 produk)
+Brand seperti Asus, Oppo, Vivo, dan Sony hanya memiliki 1 produk masing-masing.
+
+![Heatmap Korelasi Antar Fitur Numerik Ponsel](heatmap.png)Heatmap di atas menunjukkan tingkat korelasi antar fitur numerik dalam dataset ponsel.
+
+🔍 Highlight Korelasi Tinggi:
+Internal memory berkorelasi kuat dengan price (0.83)
+RAM berkorelasi kuat dengan price (0.71)
+Screen size memiliki korelasi tinggi dengan weight (0.83) dan battery size (0.73)
+Performance memiliki korelasi sedang dengan RAM (0.60) dan price (0.53)
+📌 Insight:
+Harga ponsel lebih dipengaruhi oleh spesifikasi teknis seperti:
+Kapasitas memori
+RAM
+Performa
+Fitur seperti main camera dan selfie camera memiliki korelasi rendah terhadap harga.
+Ukuran dan berat ponsel saling berkaitan kuat, logis karena layar besar → berat bertambah.
 ---
 
 # 🧹 Data Preparation
