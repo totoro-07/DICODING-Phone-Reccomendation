@@ -309,6 +309,7 @@ plt.show()
 
 - Sebagian besar ponsel berada dalam rentang harga **$100 hingga $600**.
 - Distribusi bersifat **right-skewed (positif)** — menandakan sebagian kecil ponsel berada di kelas **premium** (di atas $1000).
+
 - Terdapat sedikit ponsel dengan harga sangat tinggi, misalnya **$1750 hingga $2000**, yang merupakan flagship atau high-end devices.
 
 Jumlah Produk per Brand
@@ -389,8 +390,6 @@ merged_data.isnull().sum()
 
 """Output kode di atas memberikan informasi :
 - Sudah tidak terdapat missing value.
-
-Berdasarkan univariate analysis terdapat outlier pada kolom rating, terdapat kesalahan tulis pada kolom occupation dan terdapat penyamaan nama pekerjaan pada kolom occupation.
 """
 
 merged_data = merged_data[merged_data['rating'] != 18]
@@ -434,64 +433,17 @@ phone_new = pd.DataFrame({
 
 phone_new
 
-"""#Model Development Dengan Content Based Filtering"""
-
-vectorizer = TfidfVectorizer(stop_words='english')
-
-# Menggabungkan teks dari kolom-kolom yang relevan
-phone_new['combined_features'] = phone_new['brand'] + ' ' + phone_new['model'] + ' ' + phone_new['operating_system']
-
-# Menerapkan TfidfVectorizer pada kolom gabungan
-tfidf_matrix = vectorizer.fit_transform(phone_new['combined_features'])
-
-# Menghitung cosine similarity
-cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
-
-# Membuat fungsi untuk mendapatkan rekomendasi
-def get_recommendations(model_name, cosine_sim=cosine_sim):
-    # Mendapatkan indeks model
-    try:
-        idx = phone_new[phone_new['model'] == model_name].index[0]
-    except IndexError:
-        return "Model not found in the dataset."
-
-    # Mendapatkan skor similarity dengan model lain
-    sim_scores = list(enumerate(cosine_sim[idx]))
-
-    # Mengurutkan ponsel berdasarkan skor similarity
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-
-    # Mendapatkan skor dari 10 ponsel teratas (tidak termasuk ponsel itu sendiri)
-    sim_scores = sim_scores[1:11]
-
-    # Mendapatkan indeks ponsel
-    phone_indices = [i[0] for i in sim_scores]
-
-    # Mengembalikan 10 ponsel teratas
-    return phone_new.iloc[phone_indices]
-
-# Contoh penggunaan fungsi
-print(get_recommendations('iPhone 13'))
-print(get_recommendations('Samsung Galaxy S22 Ultra'))
-
-"""### 🤖 Sistem Rekomendasi Berbasis Konten (Content-Based Filtering)
-
-Sistem rekomendasi ini menggunakan pendekatan *content-based filtering* yang mengandalkan informasi tekstual dari setiap ponsel, seperti brand, model, dan sistem operasi. Model ini menyarankan ponsel yang memiliki kemiripan fitur dengan ponsel yang dipilih, menggunakan representasi TF-IDF dan cosine similarity sebagai metrik kesamaan.
-
-#### 📌 Langkah-langkah Implementasi
-
-**1. Inisialisasi TF-IDF Vectorizer**
-```python
-vectorizer = TfidfVectorizer(stop_words='english')
-
-#Model Development dengan Collaborative Filtering
-"""
+"""Menggabungkan Data"""
 
 # Menggabungkan data rating dan data ponsel untuk mendapatkan informasi lengkap
 merged_rating_data = pd.merge(rating, data, on='cellphone_id')
 
+"""Mengambil Kolom yang Relevan"""
+
 # Mengambil kolom user_id, cellphone_id, dan rating
 df = merged_rating_data[['user_id', 'cellphone_id', 'rating']]
+
+"""Encoding ID ke Format Numerik"""
 
 # Mengubah tipe data user_id dan cellphone_id menjadi category
 user_ids = df['user_id'].unique().tolist()
@@ -535,6 +487,47 @@ x_train, x_val, y_train, y_val = (
 )
 
 print(x_train.shape, x_val.shape, y_train.shape, y_val.shape)
+
+vectorizer = TfidfVectorizer(stop_words='english')
+
+# Menggabungkan teks dari kolom-kolom yang relevan
+phone_new['combined_features'] = phone_new['brand'] + ' ' + phone_new['model'] + ' ' + phone_new['operating_system']
+
+# Menerapkan TfidfVectorizer pada kolom gabungan
+tfidf_matrix = vectorizer.fit_transform(phone_new['combined_features'])
+
+# Menghitung cosine similarity
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+"""#Model Development Dengan Content Based Filtering"""
+
+# Membuat fungsi untuk mendapatkan rekomendasi
+def get_recommendations(model_name, cosine_sim=cosine_sim):
+    # Mendapatkan indeks model
+    try:
+        idx = phone_new[phone_new['model'] == model_name].index[0]
+    except IndexError:
+        return "Model not found in the dataset."
+
+    # Mendapatkan skor similarity dengan model lain
+    sim_scores = list(enumerate(cosine_sim[idx]))
+
+    # Mengurutkan ponsel berdasarkan skor similarity
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+    # Mendapatkan skor dari 10 ponsel teratas (tidak termasuk ponsel itu sendiri)
+    sim_scores = sim_scores[1:11]
+
+    # Mendapatkan indeks ponsel
+    phone_indices = [i[0] for i in sim_scores]
+
+    # Mengembalikan 10 ponsel teratas
+    return phone_new.iloc[phone_indices]
+
+"""Fungsi get_recommendations digunakan untuk memberikan rekomendasi 10 ponsel yang paling mirip dengan model tertentu berdasarkan kemiripan fitur-fitur seperti brand, model, dan operating_system. Fungsi ini bekerja dengan terlebih dahulu mencari indeks model ponsel yang diminta. Kemudian, skor kemiripan (cosine similarity) dihitung terhadap semua ponsel lainnya. Setelah itu, skor tersebut diurutkan dari yang paling mirip, dan 10 ponsel teratas yang paling mirip—tidak termasuk model itu sendiri—akan dikembalikan dalam bentuk DataFrame. Fungsi ini memanfaatkan representasi teks yang telah diproses menggunakan TF-IDF untuk menghitung tingkat kemiripan antar ponsel.
+
+#Model Development dengan Collaborative Filtering
+"""
 
 # Membuat arsitektur model Neural Network untuk Collaborative Filtering
 class RecommenderNet(tf.keras.Model):
@@ -592,65 +585,9 @@ history = model.fit(
     validation_data=(x_val, y_val),
 )
 
-"""### 🤖 Sistem Rekomendasi Berbasis Collaborative Filtering dengan Neural Network
-
-Sistem ini membangun model rekomendasi menggunakan pendekatan *Collaborative Filtering* berbasis **Neural Network**. Model belajar dari interaksi pengguna dan ponsel (rating) untuk memprediksi preferensi pengguna terhadap produk yang belum mereka rating.
-
----
-
-#### 📌 1. Penggabungan dan Pra-pemrosesan Data
-
-```python
-merged_rating_data = pd.merge(rating, data, on='cellphone_id')
-df = merged_rating_data[['user_id', 'cellphone_id', 'rating']]
-
-#Evaluasi
-"""
-
-# Plot hasil pelatihan model
-plt.plot(history.history['root_mean_squared_error'])
-plt.plot(history.history['val_root_mean_squared_error'])
-plt.title('Model RMSE')
-plt.ylabel('RMSE')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
-
-"""Grafik ini menunjukkan perkembangan **Root Mean Squared Error (RMSE)** selama proses pelatihan model rekomendasi berbasis Neural Network.
-
-#### 🧾 Keterangan:
-- **Garis biru**: RMSE pada data pelatihan (*train*).
-- **Garis oranye**: RMSE pada data validasi (*test*).
-
-#### 🔍 Insight:
-- RMSE pada data pelatihan terus menurun dari awal hingga akhir, menandakan model belajar dengan baik terhadap data historis.
-- RMSE pada data validasi juga menurun secara signifikan pada awal epoch, kemudian stabil di sekitar nilai **0.187–0.189**.
-- Tidak terjadi peningkatan drastis (*spike*) pada RMSE validasi, sehingga **overfitting tidak terdeteksi secara signifikan**.
-"""
-
-# Plot loss model
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
-
-"""Grafik di atas menunjukkan perkembangan nilai loss selama proses pelatihan model rekomendasi berbasis Neural Network menggunakan Collaborative Filtering.
-
-#### 📊 Penjelasan:
-- **Garis biru** menunjukkan *training loss*.
-- **Garis oranye** menunjukkan *validation loss* (test).
-
-#### 🔍 Insight:
-- Terlihat bahwa nilai training loss **terus menurun stabil**, menandakan model mampu mempelajari pola data dengan baik.
-- Validation loss juga ikut menurun di awal, lalu mulai stagnan setelah epoch ke-4 hingga ke-10.
-- Tidak ada overfitting yang signifikan hingga epoch ke-10, namun **gap antara training dan validation loss** menunjukkan bahwa model masih dapat ditingkatkan melalui:
-  - **Regularisasi** (dropout atau weight decay)
-  - **Penyesuaian arsitektur embedding**
-  - **Peningkatan jumlah data rating**
-"""
+# Contoh penggunaan fungsi
+print(get_recommendations('iPhone 13'))
+print(get_recommendations('Samsung Galaxy S22 Ultra'))
 
 # Mendapatkan data pengguna acak untuk percobaan rekomendasi
 user_id = df['user_id'].sample(1).iloc[0]
@@ -743,4 +680,96 @@ Berdasarkan model prediksi, sistem menyarankan ponsel berikut yang belum diratin
 - Model berhasil menyarankan produk dengan **kemiripan teknis dan popularitas** yang sesuai dengan ponsel yang pernah disukai pengguna.
 - Rekomendasi ini sangat relevan dalam konteks aplikasi e-commerce, sistem katalog, atau layanan konsultasi pembelian ponsel.
 
+#Evaluasi
+"""
+
+import matplotlib.pyplot as plt
+
+# Buat list untuk menyimpan hasil evaluasi
+precision_scores = []
+
+# Pilih subset user agar evaluasi tidak terlalu berat
+sample_users = rating['user_id'].unique()[:50]  # misalnya 50 user pertama
+
+for user in sample_users:
+    # Ponsel yang disukai user ini
+    liked_phones = rating[(rating['user_id'] == user) & (rating['rating'] >= 4)]['cellphone_id']
+
+    if liked_phones.empty:
+        continue
+
+    # Ambil salah satu ponsel yang disukai sebagai acuan
+    sample_phone_id = liked_phones.values[0]
+    try:
+        model_name = phone_new[phone_new['cellphone_id'] == sample_phone_id]['model'].values[0]
+    except IndexError:
+        continue
+
+    # Dapatkan rekomendasi
+    recommendations = get_recommendations(model_name)
+    if isinstance(recommendations, str):
+        continue
+
+    recommended_ids = recommendations['cellphone_id'].tolist()
+
+    # Bandingkan apakah ponsel yang disukai user ada di antara rekomendasi
+    true_positives = len(set(recommended_ids) & set(liked_phones))
+
+    precision_at_10 = true_positives / 10
+    precision_scores.append(precision_at_10)
+
+# Plot distribusi Precision@10
+plt.figure(figsize=(10, 5))
+plt.hist(precision_scores, bins=10, edgecolor='black')
+plt.title('Distribusi Precision@10 pada Sistem Content-Based Filtering')
+plt.xlabel('Precision@10')
+plt.ylabel('Jumlah User')
+plt.grid(True)
+plt.show()
+
+"""Grafik di atas menunjukkan distribusi Precision@10 pada sistem Content-Based Filtering. Grafik ini menggambarkan jumlah pengguna pada berbagai nilai Precision@10, dengan sebagian besar pengguna memiliki Precision@10 rendah, dan sejumlah kecil pengguna menunjukkan nilai Precision@10 yang lebih tinggi."""
+
+# Plot hasil pelatihan model
+plt.plot(history.history['root_mean_squared_error'])
+plt.plot(history.history['val_root_mean_squared_error'])
+plt.title('Model RMSE')
+plt.ylabel('RMSE')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+
+"""Grafik ini menunjukkan perkembangan **Root Mean Squared Error (RMSE)** selama proses pelatihan model rekomendasi berbasis Neural Network.
+
+#### 🧾 Keterangan:
+- **Garis biru**: RMSE pada data pelatihan (*train*).
+- **Garis oranye**: RMSE pada data validasi (*test*).
+
+#### 🔍 Insight:
+- RMSE pada data pelatihan terus menurun dari awal hingga akhir, menandakan model belajar dengan baik terhadap data historis.
+- RMSE pada data validasi juga menurun secara signifikan pada awal epoch, kemudian stabil di sekitar nilai **0.187–0.189**.
+- Tidak terjadi peningkatan drastis (*spike*) pada RMSE validasi, sehingga **overfitting tidak terdeteksi secara signifikan**.
+"""
+
+# Plot loss model
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+
+"""Grafik di atas menunjukkan perkembangan nilai loss selama proses pelatihan model rekomendasi berbasis Neural Network menggunakan Collaborative Filtering.
+
+#### 📊 Penjelasan:
+- **Garis biru** menunjukkan *training loss*.
+- **Garis oranye** menunjukkan *validation loss* (test).
+
+#### 🔍 Insight:
+- Terlihat bahwa nilai training loss **terus menurun stabil**, menandakan model mampu mempelajari pola data dengan baik.
+- Validation loss juga ikut menurun di awal, lalu mulai stagnan setelah epoch ke-4 hingga ke-10.
+- Tidak ada overfitting yang signifikan hingga epoch ke-10, namun **gap antara training dan validation loss** menunjukkan bahwa model masih dapat ditingkatkan melalui:
+  - **Regularisasi** (dropout atau weight decay)
+  - **Penyesuaian arsitektur embedding**
+  - **Peningkatan jumlah data rating**
 """
