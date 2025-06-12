@@ -159,204 +159,178 @@ Heatmap di atas menunjukkan tingkat korelasi antar fitur numerik dalam dataset p
 
 # 🧹 Data Preparation
 
-Tahapan data preparation dilakukan untuk memastikan data yang digunakan dalam pelatihan model bersih, relevan, dan dalam format yang sesuai dengan kebutuhan algoritma machine learning.
+### 📌 Teknik Data Preparation
+- Menggabungkan dataset menjadi satu.
+- Handling Missing Values: Menghapus nilai yang hilang dalam dataset.
+- Removing Outliers: Menghapus data dengan nilai outliers pada kolom tertentu.
+- Mengubah format penulisan: Normalisasi huruf kecil (lowercase).
+- Mereplace value: Perbaikan penulisan pada kolom occupation.
+- Menghapus data duplikat berdasarkan ID.
+- Transformasi data ke dalam format yang siap digunakan (list → DataFrame baru).
 
 ---
 
-## 🔧 Teknik yang Digunakan
+## 🧪 Proses Data Preparation
 
-- **Handling Missing Values**  
-  Menghapus atau mengisi nilai kosong untuk menjaga integritas data.
+1. **Menggabungkan dataset**:
+   - Dataset `cellphones rating` digabung dengan `cellphones data` melalui `cellphone_id`.
+   - Hasilnya digabung lagi dengan dataset `cellphones users` melalui `user_id`.
 
-- **Removing Outliers**  
-  Menghapus nilai ekstrem pada kolom numerik untuk mencegah distorsi model.
+2. **Menghapus nilai Null**:
+   - Nilai kosong (missing value) ditemukan, terutama pada kolom `occupation`, kemudian dihapus menggunakan `dropna()`.
 
-- **Dropping Irrelevant Features**  
-  Menghapus fitur yang tidak memiliki kontribusi prediktif atau memiliki nilai yang seragam.
+3. **Menghapus outlier**:
+   - Outlier pada kolom `rating` dengan nilai `18` dihapus karena tidak valid dalam skala rating normal (1–10).
 
-- **Encoding Categorical Variables**  
-  Mengubah variabel kategorikal menjadi format numerik menggunakan *One-Hot Encoding*.
+4. **Normalisasi format penulisan**:
+   - Semua nilai pada kolom `occupation` diubah menjadi huruf kecil (`lowercase`).
 
-- **Train-Test Split**  
-  Membagi dataset menjadi data latih dan uji dengan rasio 80:20.
+5. **Perbaikan penulisan (replace value)**:
+   - `'healthare'` diubah menjadi `'healthcare'`.
+   - `'it'` diubah menjadi `'information technology'`.
 
-- **Feature Scaling**  
-  Melakukan standarisasi nilai pada fitur numerik agar semua fitur memiliki skala yang setara menggunakan `StandardScaler`.
+6. **Menghapus data duplikat**:
+   - Duplikat berdasarkan `cellphone_id` dihapus untuk menjaga keunikan data ponsel.
 
----
-
-## 🧪 Rincian Proses Data Preparation
-
-- Fitur dengan **jumlah missing value < 100** dihapus dari dataset.
-- Fitur dengan **jumlah missing value > 1000** dilakukan imputasi.
-- Outlier diatasi menggunakan metode **Interquartile Range (IQR)**.
-- Fitur `id`, `latitude`, `longitude`, dan `time` dihapus karena tidak memberikan nilai tambah secara prediktif.
-- Fitur `category`, `currency`, `fee`, dan `price_type` dihapus karena memiliki nilai yang sama di seluruh baris data.
-- Fitur kategorikal dikonversi menggunakan **One-Hot Encoding**.
-- Dataset dibagi menjadi:
-  
-  | Jenis Dataset  | Jumlah |
-  |----------------|--------|
-  | Keseluruhan    | 8,136  |
-  | Data Latih     | 6,508  |
-  | Data Uji       | 1,628  |
-
-- Skala fitur numerik dinormalisasi menggunakan **StandardScaler** pada data latih dan data uji.
-
----
-
-## 🎯 Alasan Dilakukannya Tahapan Ini
-
-- **Mengatasi Missing Values**  
-  Untuk menghindari error saat proses training model.
-
-- **Menghapus Outlier**  
-  Untuk meningkatkan akurasi model dan menghindari bias akibat nilai ekstrem.
-
-- **Menghapus Fitur Tak Relevan**  
-  Untuk menyederhanakan model dan mengurangi beban komputasi.
-
-- **Encoding Variabel Kategorikal**  
-  Agar data dapat diproses oleh algoritma yang hanya menerima input numerik.
-
-- **Pembagian Data 80:20**  
-  Untuk memastikan data latih cukup besar, sekaligus menyediakan data uji yang representatif.
-
-- **Standarisasi Fitur**  
-  Agar model tidak bias terhadap fitur yang memiliki skala lebih besar.
+7. **Transformasi data**:
+   - Nilai pada kolom `cellphone_id`, `brand`, `model`, dan `operating system` dikonversi ke dalam bentuk list.
+   - List tersebut dikembalikan menjadi DataFrame baru bernama `phone_new` untuk digunakan pada proses berikutnya (TF-IDF dan sistem rekomendasi).
 
 
 ---
 
 ## 🤖 5. Modeling
 
-## 🔍 Model yang Digunakan
+Notebook ini membangun dua jenis sistem rekomendasi untuk ponsel, yaitu:
 
-### 🔹 Support Vector Regression (SVR)
-- **Parameter:** default
-- **Deskripsi:** Memproyeksikan data ke dimensi yang lebih tinggi untuk menemukan hyperplane terbaik dalam margin error tertentu. Cocok untuk regresi non-linear.
+## 1. 📌 Content-Based Filtering
 
----
+### 🎯 Tujuan
+Merekomendasikan ponsel yang **mirip dengan ponsel tertentu** berdasarkan fitur-fitur deskriptif seperti brand, model, dan sistem operasi.
 
-### 🔹 K-Nearest Neighbors (KNN)
-- **Parameter:** `n_neighbors=4`
-- **Deskripsi:** Melakukan prediksi berdasarkan rata-rata nilai dari 4 tetangga terdekat berdasarkan jarak euclidean atau metrik lainnya.
+### 🔧 Teknik yang Digunakan
 
----
+- **Fitur Deskriptif**: 
+  - `brand`
+  - `model`
+  - `operating_system`
+- **Langkah-langkah:**
+  1. Menggabungkan semua fitur teks ke dalam satu kolom `combined_features`.
+  2. Mengubah teks menjadi representasi numerik menggunakan **TF-IDF Vectorizer**.
+  3. Menghitung **cosine similarity** antar vektor ponsel untuk menemukan kemiripan.
+  4. Fungsi `get_recommendations(model_name)` mengembalikan **10 ponsel paling mirip**.
 
-### 🔹 Random Forest
-- **Parameter:** `random_state=42`
-- **Deskripsi:** Merupakan ensemble dari banyak pohon keputusan. Mengurangi overfitting dan meningkatkan akurasi dengan menggunakan data acak dan fitur subset.
+### ✅ Kelebihan
 
----
-
-### 🔹 Gradient Boosting
-- **Parameter:** `random_state=42`
-- **Deskripsi:** Metode boosting yang membangun model secara iteratif, setiap model memperbaiki kesalahan dari model sebelumnya.
-
----
-
-### 🔹 XGBoost
-- **Parameter:** `verbosity=0`, `random_state=42`
-- **Deskripsi:** Implementasi boosting yang cepat dan efisien, dengan kemampuan regularisasi (L1/L2) untuk menghindari overfitting.
+- Tidak membutuhkan interaksi pengguna sebelumnya.
+- Dapat digunakan hanya dengan memilih ponsel yang disukai, cocok untuk **user baru (cold start)**.
 
 ---
 
-### 🔹 CatBoost
-- **Parameter:** `verbose=0`, `random_state=42`
-- **Deskripsi:** Algoritma boosting yang optimal untuk data kategorikal dan tidak memerlukan preprocessing yang kompleks.
+## 2. 🤖 Collaborative Filtering (Neural Network-Based)
+
+### 🎯 Tujuan
+Merekomendasikan ponsel berdasarkan **pola rating dari pengguna lain yang mirip**.
+
+### 🔧 Teknik yang Digunakan
+
+- **Fitur**: Data interaksi berupa `user_id`, `cellphone_id`, dan `rating`.
+- **Langkah-langkah:**
+  1. Menggabungkan data rating dengan metadata ponsel.
+  2. Encoding `user_id` dan `cellphone_id` ke bentuk numerik.
+  3. Membuat **model neural network**:
+     - Menggunakan **Embedding Layer** untuk user dan ponsel.
+     - Melakukan dot product + bias dan aktivasi sigmoid.
+  4. Model dilatih dengan **loss: Binary Crossentropy** dan metrik **RMSE**.
+  5. Setelah pelatihan, model dapat:
+     - Memprediksi rating untuk ponsel yang belum dirating user.
+     - Memberikan rekomendasi top-N berdasarkan skor prediksi tertinggi.
+
+### ✅ Kelebihan
+
+- Rekomendasi **lebih personal** karena mempertimbangkan pola interaksi banyak pengguna.
+- Mampu menangkap selera pengguna berdasarkan perilaku historis, bukan hanya fitur produk.
 
 ---
 
-## ✅ Kelebihan dan Kekurangan Setiap Model
+## 📊 Perbandingan
 
-### SVR
-- **Kelebihan:**
-  - Cocok untuk data non-linear.
-  - Bisa dikontrol menggunakan parameter epsilon.
-- **Kekurangan:**
-  - Lambat saat digunakan pada dataset besar.
-  - Sangat sensitif terhadap skala fitur.
-
----
-
-### KNN
-- **Kelebihan:**
-  - Simpel dan mudah dipahami.
-  - Tidak membutuhkan proses pelatihan eksplisit.
-- **Kekurangan:**
-  - Tidak efisien untuk dataset besar.
-  - Sensitif terhadap outlier dan skala fitur.
-
----
-
-### Random Forest
-- **Kelebihan:**
-  - Akurat dan tahan terhadap overfitting.
-  - Cocok untuk data kompleks dan beragam.
-- **Kekurangan:**
-  - Kurang interpretatif.
-  - Membutuhkan sumber daya komputasi lebih besar.
-
----
-
-### Gradient Boosting
-- **Kelebihan:**
-  - Akurasi tinggi.
-  - Efektif dalam menangani outlier.
-- **Kekurangan:**
-  - Membutuhkan tuning hyperparameter.
-  - Proses pelatihan relatif lambat.
-
----
-
-### XGBoost
-- **Kelebihan:**
-  - Sangat efisien dan cepat.
-  - Mendukung regularisasi (L1, L2).
-- **Kekurangan:**
-  - Pengaturan parameter cukup kompleks.
-
----
-
-### CatBoost
-- **Kelebihan:**
-  - Dapat menangani data kategorikal tanpa encoding manual.
-  - Minim kebutuhan preprocessing.
-- **Kekurangan:**
-  - Dokumentasi lebih terbatas dibanding XGBoost.
-  - Waktu pelatihan awal bisa lebih lambat.
-![Perbandingan Model](image.png)
-
+| Metode                 | Kelebihan                                                   | Kekurangan                                                  |
+|------------------------|-------------------------------------------------------------|-------------------------------------------------------------|
+| Content-Based          | Tidak perlu data rating, cocok untuk user/item baru         | Terbatas hanya pada fitur yang dimiliki ponsel              |
+| Collaborative Filtering| Rekomendasi lebih personal berdasarkan pola pengguna lain   | Tidak bekerja baik jika data rating sedikit (cold start)    |
 
 ---
 
 ## 📏 6. Evaluation
 
-### Metrik yang Digunakan:
-- **RMSE (Root Mean Squared Error)**: Rata-rata kuadrat error, sensitif terhadap outlier.
-- **MAE (Mean Absolute Error)**: Rata-rata selisih absolut antara aktual dan prediksi.
-- **R² Score**: Proporsi variasi target yang bisa dijelaskan oleh model.
+![Evaluasi Model RMSE](rmse.png)
+Grafik ini menunjukkan perkembangan **Root Mean Squared Error (RMSE)** selama proses pelatihan model rekomendasi berbasis Neural Network.
 
-### Hasil Evaluasi:
+#### 🧾 Keterangan:
+- **Garis biru**: RMSE pada data pelatihan (*train*).
+- **Garis oranye**: RMSE pada data validasi (*test*).
 
-## 🧪 Tabel Hasil Evaluasi
+#### 🔍 Insight:
+- RMSE pada data pelatihan terus menurun dari awal hingga akhir, menandakan model belajar dengan baik terhadap data historis.
+- RMSE pada data validasi juga menurun secara signifikan pada awal epoch, kemudian stabil di sekitar nilai **0.187–0.189**.
+- Tidak terjadi peningkatan drastis (*spike*) pada RMSE validasi, sehingga **overfitting tidak terdeteksi secara signifikan**.
 
-| No | Model              |     RMSE     |     MAE      | R² Score  |
-|----|--------------------|--------------|--------------|-----------|
-| 1  | Gradient Boosting  | **441.08**   | 372.08       | 0.1231    |
-| 2  | Random Forest      | 463.08       | 385.64       | 0.0335    |
-| 3  | SVR                | 479.37       | **372.03**   | -0.0358   |
-| 4  | CatBoost           | 490.86       | 420.44       | -0.0860   |
-| 5  | XGBoost            | 534.93       | 462.75       | -0.2898   |
-| 6  | KNN                | 568.38       | 479.07       | -0.4561   |
+![Evaluasi Model LOSS](loss.png)
+Grafik di atas menunjukkan perkembangan nilai loss selama proses pelatihan model rekomendasi berbasis Neural Network menggunakan Collaborative Filtering.
+
+#### 📊 Penjelasan:
+- **Garis biru** menunjukkan *training loss*.
+- **Garis oranye** menunjukkan *validation loss* (test).
+
+#### 🔍 Insight:
+- Terlihat bahwa nilai training loss **terus menurun stabil**, menandakan model mampu mempelajari pola data dengan baik.
+- Validation loss juga ikut menurun di awal, lalu mulai stagnan setelah epoch ke-4 hingga ke-10.
+- Tidak ada overfitting yang signifikan hingga epoch ke-10, namun **gap antara training dan validation loss** menunjukkan bahwa model masih dapat ditingkatkan melalui:
+  - **Regularisasi** (dropout atau weight decay)
+  - **Penyesuaian arsitektur embedding**
+  - **Peningkatan jumlah data rating**
 
 ---
 
-## 📌 Kesimpulan
+# 🎯 Menampilkan Rekomendasi Ponsel untuk Pengguna Tertentu
 
-- **Gradient Boosting** menunjukkan performa terbaik secara keseluruhan dengan nilai **RMSE dan R² Score tertinggi** di antara semua model.
-- **SVR** memiliki **MAE terendah**, menunjukkan error rata-rata prediksi yang kecil secara absolut, meskipun R²-nya negatif.
-- **KNN** dan **XGBoost** memiliki performa paling rendah berdasarkan semua metrik, menunjukkan bahwa model ini kurang cocok untuk dataset ini tanpa tuning lebih lanjut.
-![Actual vs predict (XGboost)](image-1.png)
+Bagian ini bertujuan untuk **menguji model rekomendasi** dengan memilih satu pengguna secara acak dan menghasilkan daftar ponsel yang disarankan berdasarkan prediksi model.
+### 🎯 Hasil Rekomendasi Ponsel untuk User ID: 27
+
+Model rekomendasi berbasis Collaborative Filtering berhasil menghasilkan saran ponsel untuk pengguna tertentu berdasarkan preferensi historisnya. Berikut adalah hasilnya:
+
+---
+
+#### ✅ Ponsel dengan Rating Tertinggi oleh Pengguna
+Ponsel-ponsel berikut ini merupakan yang paling disukai oleh pengguna berdasarkan histori rating yang telah diberikan:
+
+1. **iPhone 13 Pro Max**
+2. **10T**
+3. **Galaxy A32**
+4. **Moto G Power (2022)**
+5. **Galaxy S22 Plus**
+
+---
+
+#### 🤖 Top 10 Rekomendasi Ponsel untuk Pengguna Ini
+Berdasarkan model prediksi, sistem menyarankan ponsel berikut yang belum dirating oleh pengguna, namun diprediksi sangat cocok:
+
+1. **iPhone SE (2022)**
+2. **iPhone 13 Mini**
+3. **iPhone 13**
+4. **iPhone XR**
+5. **Pixel 6 Pro**
+6. **Galaxy S22**
+7. **10 Pro**
+8. **iPhone 13 Pro**
+9. **Find X5 Pro**
+10. **Xperia Pro**
+
+---
+
+#### 📌 Insight:
+- Rekomendasi sangat condong ke **brand Apple dan flagship Android** seperti Pixel dan Galaxy, mencerminkan bahwa model telah belajar dari preferensi sebelumnya.
+- Model berhasil menyarankan produk dengan **kemiripan teknis dan popularitas** yang sesuai dengan ponsel yang pernah disukai pengguna.
+- Rekomendasi ini sangat relevan dalam konteks aplikasi e-commerce, sistem katalog, atau layanan konsultasi pembelian ponsel.
 
