@@ -299,7 +299,7 @@ Merekomendasikan ponsel berdasarkan **pola rating dari pengguna lain yang mirip*
 | Content-Based          | Tidak perlu data rating, cocok untuk user/item baru         | Terbatas hanya pada fitur yang dimiliki ponsel              |
 | Collaborative Filtering| Rekomendasi lebih personal berdasarkan pola pengguna lain   | Tidak bekerja baik jika data rating sedikit (cold start)    |
 
-# 🎯 Menampilkan Rekomendasi Ponsel untuk Pengguna Tertentu
+## 🎯 Menampilkan Rekomendasi Ponsel untuk Pengguna Tertentu
 
 Bagian ini bertujuan untuk **menguji model rekomendasi** dengan memilih satu pengguna secara acak dan menghasilkan daftar ponsel yang disarankan berdasarkan prediksi model.
 ### 🎯 Hasil Rekomendasi Ponsel untuk User ID: 27
