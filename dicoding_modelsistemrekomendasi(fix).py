@@ -585,6 +585,19 @@ history = model.fit(
     validation_data=(x_val, y_val),
 )
 
+"""- **Fitur**: Data interaksi berupa `user_id`, `cellphone_id`, dan `rating`.
+- **Langkah-langkah:**
+  1. Menggabungkan data rating dengan metadata ponsel.
+  2. Encoding `user_id` dan `cellphone_id` ke bentuk numerik.
+  3. Membuat **model neural network**:
+     - Menggunakan **Embedding Layer** untuk user dan ponsel.
+     - Melakukan dot product + bias dan aktivasi sigmoid.
+  4. Model dilatih dengan **loss: Binary Crossentropy** dan metrik **RMSE**.
+  5. Setelah pelatihan, model dapat:
+     - Memprediksi rating untuk ponsel yang belum dirating user.
+     - Memberikan rekomendasi top-N berdasarkan skor prediksi tertinggi.
+"""
+
 # Contoh penggunaan fungsi
 print(get_recommendations('iPhone 13'))
 print(get_recommendations('Samsung Galaxy S22 Ultra'))
