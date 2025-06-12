@@ -159,17 +159,6 @@ Heatmap di atas menunjukkan tingkat korelasi antar fitur numerik dalam dataset p
 
 # 🧹 Data Preparation
 
-### 📌 Teknik Data Preparation
-- Menggabungkan dataset menjadi satu.
-- Handling Missing Values: Menghapus nilai yang hilang dalam dataset.
-- Removing Outliers: Menghapus data dengan nilai outliers pada kolom tertentu.
-- Mengubah format penulisan: Normalisasi huruf kecil (lowercase).
-- Mereplace value: Perbaikan penulisan pada kolom occupation.
-- Menghapus data duplikat berdasarkan ID.
-- Transformasi data ke dalam format yang siap digunakan (list → DataFrame baru).
-
----
-
 ## 🧪 Proses Data Preparation
 
 1. **Menggabungkan dataset**:
