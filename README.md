@@ -264,6 +264,9 @@ Merekomendasikan ponsel berdasarkan **pola rating dari pengguna lain yang mirip*
 
 ## 📏 6. Evaluation
 
+![Evaluasi Model Precision Model Content Based Filter](precision.png)
+Grafik di atas menunjukkan distribusi Precision@10 pada sistem Content-Based Filtering. Grafik ini menggambarkan jumlah pengguna pada berbagai nilai Precision@10, dengan sebagian besar pengguna memiliki Precision@10 rendah, dan sejumlah kecil pengguna menunjukkan nilai Precision@10 yang lebih tinggi.
+
 ![Evaluasi Model RMSE](rmse.png)
 Grafik ini menunjukkan perkembangan **Root Mean Squared Error (RMSE)** selama proses pelatihan model rekomendasi berbasis Neural Network.
 
