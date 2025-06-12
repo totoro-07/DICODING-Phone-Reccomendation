@@ -195,6 +195,45 @@ Heatmap di atas menunjukkan tingkat korelasi antar fitur numerik dalam dataset p
 7. **Transformasi data**:
    - Nilai pada kolom `cellphone_id`, `brand`, `model`, dan `operating system` dikonversi ke dalam bentuk list.
    - List tersebut dikembalikan menjadi DataFrame baru bernama `phone_new` untuk digunakan pada proses berikutnya (TF-IDF dan sistem rekomendasi).
+8. **Penggabungan Rating dan Data Ponsel**
+- Dataset `rating` dan `data` digabung berdasarkan `cellphone_id` untuk mendapatkan informasi rating beserta detail ponsel.
+
+9. **Seleksi Kolom**
+- Hanya kolom `user_id`, `cellphone_id`, dan `rating` yang diambil untuk pelatihan model.
+
+10. **Encoding ID**
+- `user_id` dan `cellphone_id` dikonversi menjadi ID numerik.
+- Dibuat dua dictionary untuk mapping:
+  - Asli ke numerik (`user_to_user_encoded`, `cellphone_to_cellphone_encoded`).
+  - Numerik ke asli (`user_encoded_to_user`, `cellphone_encoded_to_cellphone`).
+
+11. **Menghitung Jumlah Unik**
+- Jumlah user unik dan ponsel unik dihitung dari hasil encoding.
+
+12. **Konversi dan Normalisasi Rating**
+- Rating dikonversi ke tipe `float32`.
+- Rating dinormalisasi ke rentang 0–1 menggunakan:
+
+13. **Pengacakan Dataset**
+- Dataset diacak menggunakan `sample(frac=1)` untuk distribusi yang lebih merata.
+
+14. **Mempersiapkan Fitur dan Target**
+- Input (`x`): pasangan `[user, cellphone]`.
+- Target (`y`): rating terstandarisasi (0–1).
+
+15. **Membagi Data**
+- Dataset dibagi menjadi:
+- **80%** untuk pelatihan (`x_train`, `y_train`)
+- **20%** untuk validasi (`x_val`, `y_val`)
+
+16. **Menggabungkan Fitur Teks Ponsel**
+   - Informasi dari kolom `brand`, `model`, dan `operating_system` digabung menjadi satu kolom teks baru bernama `combined_features`.
+
+17. **Ekstraksi Fitur dengan TF-IDF**
+   - TF-IDF Vectorizer diterapkan pada kolom `combined_features` untuk mengubah teks menjadi representasi numerik berdasarkan frekuensi kata.
+
+18. **Menghitung Kemiripan Ponsel**
+   - Cosine similarity dihitung dari hasil TF-IDF untuk mengukur kemiripan antar ponsel berdasarkan deskripsi fiturnya.
 
 
 ---
@@ -260,42 +299,6 @@ Merekomendasikan ponsel berdasarkan **pola rating dari pengguna lain yang mirip*
 | Content-Based          | Tidak perlu data rating, cocok untuk user/item baru         | Terbatas hanya pada fitur yang dimiliki ponsel              |
 | Collaborative Filtering| Rekomendasi lebih personal berdasarkan pola pengguna lain   | Tidak bekerja baik jika data rating sedikit (cold start)    |
 
----
-
-## 📏 6. Evaluation
-
-![Evaluasi Model Precision Model Content Based Filter](precision.png)
-Grafik di atas menunjukkan distribusi Precision@10 pada sistem Content-Based Filtering. Grafik ini menggambarkan jumlah pengguna pada berbagai nilai Precision@10, dengan sebagian besar pengguna memiliki Precision@10 rendah, dan sejumlah kecil pengguna menunjukkan nilai Precision@10 yang lebih tinggi.
-
-![Evaluasi Model RMSE](rmse.png)
-Grafik ini menunjukkan perkembangan **Root Mean Squared Error (RMSE)** selama proses pelatihan model rekomendasi berbasis Neural Network.
-
-#### 🧾 Keterangan:
-- **Garis biru**: RMSE pada data pelatihan (*train*).
-- **Garis oranye**: RMSE pada data validasi (*test*).
-
-#### 🔍 Insight:
-- RMSE pada data pelatihan terus menurun dari awal hingga akhir, menandakan model belajar dengan baik terhadap data historis.
-- RMSE pada data validasi juga menurun secara signifikan pada awal epoch, kemudian stabil di sekitar nilai **0.187–0.189**.
-- Tidak terjadi peningkatan drastis (*spike*) pada RMSE validasi, sehingga **overfitting tidak terdeteksi secara signifikan**.
-
-![Evaluasi Model LOSS](loss.png)
-Grafik di atas menunjukkan perkembangan nilai loss selama proses pelatihan model rekomendasi berbasis Neural Network menggunakan Collaborative Filtering.
-
-#### 📊 Penjelasan:
-- **Garis biru** menunjukkan *training loss*.
-- **Garis oranye** menunjukkan *validation loss* (test).
-
-#### 🔍 Insight:
-- Terlihat bahwa nilai training loss **terus menurun stabil**, menandakan model mampu mempelajari pola data dengan baik.
-- Validation loss juga ikut menurun di awal, lalu mulai stagnan setelah epoch ke-4 hingga ke-10.
-- Tidak ada overfitting yang signifikan hingga epoch ke-10, namun **gap antara training dan validation loss** menunjukkan bahwa model masih dapat ditingkatkan melalui:
-  - **Regularisasi** (dropout atau weight decay)
-  - **Penyesuaian arsitektur embedding**
-  - **Peningkatan jumlah data rating**
-
----
-
 # 🎯 Menampilkan Rekomendasi Ponsel untuk Pengguna Tertentu
 
 Bagian ini bertujuan untuk **menguji model rekomendasi** dengan memilih satu pengguna secara acak dan menghasilkan daftar ponsel yang disarankan berdasarkan prediksi model.
@@ -337,3 +340,39 @@ Berdasarkan model prediksi, sistem menyarankan ponsel berikut yang belum diratin
 - Model berhasil menyarankan produk dengan **kemiripan teknis dan popularitas** yang sesuai dengan ponsel yang pernah disukai pengguna.
 - Rekomendasi ini sangat relevan dalam konteks aplikasi e-commerce, sistem katalog, atau layanan konsultasi pembelian ponsel.
 
+
+---
+
+## 📏 6. Evaluation
+
+![Evaluasi Model Precision Model Content Based Filter](precision.png)
+Grafik di atas menunjukkan distribusi Precision@10 pada sistem Content-Based Filtering. Grafik ini menggambarkan jumlah pengguna pada berbagai nilai Precision@10, dengan sebagian besar pengguna memiliki Precision@10 rendah, dan sejumlah kecil pengguna menunjukkan nilai Precision@10 yang lebih tinggi.
+
+![Evaluasi Model RMSE](rmse.png)
+Grafik ini menunjukkan perkembangan **Root Mean Squared Error (RMSE)** selama proses pelatihan model rekomendasi berbasis Neural Network.
+
+#### 🧾 Keterangan:
+- **Garis biru**: RMSE pada data pelatihan (*train*).
+- **Garis oranye**: RMSE pada data validasi (*test*).
+
+#### 🔍 Insight:
+- RMSE pada data pelatihan terus menurun dari awal hingga akhir, menandakan model belajar dengan baik terhadap data historis.
+- RMSE pada data validasi juga menurun secara signifikan pada awal epoch, kemudian stabil di sekitar nilai **0.187–0.189**.
+- Tidak terjadi peningkatan drastis (*spike*) pada RMSE validasi, sehingga **overfitting tidak terdeteksi secara signifikan**.
+
+![Evaluasi Model LOSS](loss.png)
+Grafik di atas menunjukkan perkembangan nilai loss selama proses pelatihan model rekomendasi berbasis Neural Network menggunakan Collaborative Filtering.
+
+#### 📊 Penjelasan:
+- **Garis biru** menunjukkan *training loss*.
+- **Garis oranye** menunjukkan *validation loss* (test).
+
+#### 🔍 Insight:
+- Terlihat bahwa nilai training loss **terus menurun stabil**, menandakan model mampu mempelajari pola data dengan baik.
+- Validation loss juga ikut menurun di awal, lalu mulai stagnan setelah epoch ke-4 hingga ke-10.
+- Tidak ada overfitting yang signifikan hingga epoch ke-10, namun **gap antara training dan validation loss** menunjukkan bahwa model masih dapat ditingkatkan melalui:
+  - **Regularisasi** (dropout atau weight decay)
+  - **Penyesuaian arsitektur embedding**
+  - **Peningkatan jumlah data rating**
+
+---
