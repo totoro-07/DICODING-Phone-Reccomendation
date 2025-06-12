@@ -98,6 +98,7 @@ Ketiga dataset ini saling terhubung:
 ---
 
 ![Distribusi Rating Pengguna terhadap Ponsel](ratingPengguna.png)
+
 Grafik di atas menunjukkan distribusi frekuensi nilai rating yang diberikan oleh pengguna terhadap berbagai ponsel.
 
 - Skala rating berkisar dari **1 hingga 10**, dengan satu outlier di **18** yang kemungkinan merupakan data tidak valid.
@@ -111,6 +112,7 @@ Grafik di atas menunjukkan distribusi frekuensi nilai rating yang diberikan oleh
 > - Perlu dilakukan **penanganan terhadap nilai anomali**, seperti rating `18`.
 
 ![Distribusi Usia Pengguna](distribusiUsia.png)
+
 Grafik di atas menunjukkan distribusi usia dari pengguna yang memberikan rating terhadap ponsel.
 
 - Mayoritas pengguna berusia **25 hingga 35 tahun**, dengan puncaknya sekitar **30 tahun**.
@@ -118,6 +120,7 @@ Grafik di atas menunjukkan distribusi usia dari pengguna yang memberikan rating 
 - Terdapat pengguna dengan usia hingga **60 tahun**, meskipun dalam jumlah kecil.
 
 ![Distribusi Harga Ponsel](distribusiHarga.png)
+
 Grafik di atas menunjukkan distribusi harga ponsel dalam dataset, dalam satuan **USD**.
 
 - Sebagian besar ponsel berada dalam rentang harga **$100 hingga $600**.
@@ -127,6 +130,7 @@ Grafik di atas menunjukkan distribusi harga ponsel dalam dataset, dalam satuan *
 
 
 ![Jumlah Produk per brand](jumlahProduk.png)
+
 Grafik di atas menunjukkan jumlah produk (ponsel) yang tersedia pada dataset berdasarkan merek.
 
 - **Samsung** merupakan brand dengan jumlah produk terbanyak (**8 produk**), diikuti oleh:
@@ -134,7 +138,7 @@ Grafik di atas menunjukkan jumlah produk (ponsel) yang tersedia pada dataset ber
   - **Motorola**, **OnePlus**, dan **Xiaomi** (masing-masing 4 produk)
 - Brand seperti **Asus**, **Oppo**, **Vivo**, dan **Sony** hanya memiliki **1 produk** masing-masing.
 
-![Heatmap Korelasi Antar Fitur Numerik Ponsel](heatmap.png)Heatmap di atas menunjukkan tingkat korelasi antar fitur numerik dalam dataset ponsel.
+![Heatmap Korelasi Antar Fitur Numerik Ponsel](heatmap.png)
 
 Heatmap di atas menunjukkan tingkat korelasi antar fitur numerik dalam dataset ponsel.
 
