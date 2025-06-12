@@ -119,7 +119,7 @@ Grafik di atas menunjukkan distribusi usia dari pengguna yang memberikan rating 
 - Distribusi memiliki **kemiringan ke kanan (right-skewed)** — menandakan lebih sedikit pengguna yang berusia di atas 40 tahun.
 - Terdapat pengguna dengan usia hingga **60 tahun**, meskipun dalam jumlah kecil.
 
-![Distribusi Harga Ponsel](distribusiHarga.png)
+![Distribusi Harga Ponsel](distribusiHarga1.png)
 
 Grafik di atas menunjukkan distribusi harga ponsel dalam dataset, dalam satuan **USD**.
 
