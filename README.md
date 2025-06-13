@@ -350,7 +350,7 @@ Grafik ini menunjukkan perkembangan **Root Mean Squared Error (RMSE)** selama pr
 
 #### 🔍 Insight:
 - RMSE pada data pelatihan terus menurun dari awal hingga akhir, menandakan model belajar dengan baik terhadap data historis.
-- RMSE pada data validasi juga menurun secara signifikan pada awal epoch, kemudian stabil di sekitar nilai **0.187–0.189**.
+- RMSE pada data validasi juga menurun secara signifikan pada awal epoch, kemudian stabil di sekitar nilai **0.2087**.
 - Tidak terjadi peningkatan drastis (*spike*) pada RMSE validasi, sehingga **overfitting tidak terdeteksi secara signifikan**.
 
 ![Evaluasi Model LOSS](loss.png)
