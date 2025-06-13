@@ -253,6 +253,20 @@ Merekomendasikan ponsel yang **mirip dengan ponsel tertentu** berdasarkan fitur-
 - Tidak membutuhkan interaksi pengguna sebelumnya.
 - Dapat digunakan hanya dengan memilih ponsel yang disukai, cocok untuk **user baru (cold start)**.
 
+### Output
+| cellphone\_id | Brand    | Model              | Operating System | Combined Features                   |
+| ------------- | -------- | ------------------ | ---------------- | ----------------------------------- |
+| 3             | Apple    | iPhone 13 Pro      | iOS              | Apple iPhone 13 Pro iOS             |
+| 1             | Apple    | iPhone 13 Mini     | iOS              | Apple iPhone 13 Mini iOS            |
+| 4             | Apple    | iPhone 13 Pro Max  | iOS              | Apple iPhone 13 Pro Max iOS         |
+| 5             | Apple    | iPhone XR          | iOS              | Apple iPhone XR iOS                 |
+| 0             | Apple    | iPhone SE (2022)   | iOS              | Apple iPhone SE (2022) iOS          |
+| 30            | Motorola | Moto G Play (2021) | Android          | Motorola Moto G Play (2021) Android |
+| 10            | Samsung  | Galaxy S22         | Android          | Samsung Galaxy S22 Android          |
+| 9             | Samsung  | Galaxy A53         | Android          | Samsung Galaxy A53 Android          |
+| 23            | Vivo     | X80 Pro            | Android          | Vivo X80 Pro Android                |
+| 8             | Samsung  | Galaxy A32         | Android          | Samsung Galaxy A32 Android          |
+
 ---
 
 ## 2. 🤖 Collaborative Filtering (Neural Network-Based)
@@ -279,6 +293,35 @@ Merekomendasikan ponsel berdasarkan **pola rating dari pengguna lain yang mirip*
 - Rekomendasi **lebih personal** karena mempertimbangkan pola interaksi banyak pengguna.
 - Mampu menangkap selera pengguna berdasarkan perilaku historis, bukan hanya fitur produk.
 
+### Output:
+### ✅ Rekomendasi Ponsel Berdasarkan Prediksi Model
+
+**Showing recommendations for user:** `60`
+
+---
+
+#### 📱 Cellphones with High Ratings from User
+- Moto G Pure  
+- 12 Pro  
+- Moto G Power (2022)  
+- Moto G Stylus (2022)  
+- Pixel 6a  
+
+---
+
+#### 🔝 Top 10 Recommended Cellphones
+- iPhone SE (2022)  
+- iPhone 13 Pro Max  
+- iPhone 13 Pro  
+- Find X5 Pro  
+- 11T Pro  
+- iPhone 13  
+- 10 Pro  
+- Pixel 6 Pro  
+- Galaxy S22  
+- Galaxy S22 Ultra
+
+
 ---
 
 ## 📊 Perbandingan
@@ -288,47 +331,8 @@ Merekomendasikan ponsel berdasarkan **pola rating dari pengguna lain yang mirip*
 | Content-Based          | Tidak perlu data rating, cocok untuk user/item baru         | Terbatas hanya pada fitur yang dimiliki ponsel              |
 | Collaborative Filtering| Rekomendasi lebih personal berdasarkan pola pengguna lain   | Tidak bekerja baik jika data rating sedikit (cold start)    |
 
-## 🎯 Menampilkan Rekomendasi Ponsel untuk Pengguna Tertentu
-
-Bagian ini bertujuan untuk **menguji model rekomendasi** dengan memilih satu pengguna secara acak dan menghasilkan daftar ponsel yang disarankan berdasarkan prediksi model.
-### 🎯 Hasil Rekomendasi Ponsel untuk User ID: 27
-
-Model rekomendasi berbasis Collaborative Filtering berhasil menghasilkan saran ponsel untuk pengguna tertentu berdasarkan preferensi historisnya. Berikut adalah hasilnya:
 
 ---
-
-#### ✅ Ponsel dengan Rating Tertinggi oleh Pengguna
-Ponsel-ponsel berikut ini merupakan yang paling disukai oleh pengguna berdasarkan histori rating yang telah diberikan:
-
-1. **iPhone 13 Pro Max**
-2. **10T**
-3. **Galaxy A32**
-4. **Moto G Power (2022)**
-5. **Galaxy S22 Plus**
-
----
-
-#### 🤖 Top 10 Rekomendasi Ponsel untuk Pengguna Ini
-Berdasarkan model prediksi, sistem menyarankan ponsel berikut yang belum dirating oleh pengguna, namun diprediksi sangat cocok:
-
-1. **iPhone SE (2022)**
-2. **iPhone 13 Mini**
-3. **iPhone 13**
-4. **iPhone XR**
-5. **Pixel 6 Pro**
-6. **Galaxy S22**
-7. **10 Pro**
-8. **iPhone 13 Pro**
-9. **Find X5 Pro**
-10. **Xperia Pro**
-
----
-
-#### 📌 Insight:
-- Rekomendasi sangat condong ke **brand Apple dan flagship Android** seperti Pixel dan Galaxy, mencerminkan bahwa model telah belajar dari preferensi sebelumnya.
-- Model berhasil menyarankan produk dengan **kemiripan teknis dan popularitas** yang sesuai dengan ponsel yang pernah disukai pengguna.
-- Rekomendasi ini sangat relevan dalam konteks aplikasi e-commerce, sistem katalog, atau layanan konsultasi pembelian ponsel.
-
 
 ---
 

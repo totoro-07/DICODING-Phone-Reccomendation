@@ -524,7 +524,22 @@ def get_recommendations(model_name, cosine_sim=cosine_sim):
     # Mengembalikan 10 ponsel teratas
     return phone_new.iloc[phone_indices]
 
-"""Fungsi get_recommendations digunakan untuk memberikan rekomendasi 10 ponsel yang paling mirip dengan model tertentu berdasarkan kemiripan fitur-fitur seperti brand, model, dan operating_system. Fungsi ini bekerja dengan terlebih dahulu mencari indeks model ponsel yang diminta. Kemudian, skor kemiripan (cosine similarity) dihitung terhadap semua ponsel lainnya. Setelah itu, skor tersebut diurutkan dari yang paling mirip, dan 10 ponsel teratas yang paling mirip—tidak termasuk model itu sendiri—akan dikembalikan dalam bentuk DataFrame. Fungsi ini memanfaatkan representasi teks yang telah diproses menggunakan TF-IDF untuk menghitung tingkat kemiripan antar ponsel.
+# Mendapatkan rekomendasi untuk "iPhone 13"
+recommendations = get_recommendations('iPhone 13')
+print("Rekomendasi ponsel mirip dengan 'iPhone 13':")
+print(recommendations)
+
+# Mendapatkan rekomendasi untuk "Samsung Galaxy S21 Ultra"
+recommendations = get_recommendations('Galaxy S21 Ultra')
+print("\nRekomendasi ponsel mirip dengan 'Galaxy S21 Ultra':")
+print(recommendations)
+
+# Mendapatkan rekomendasi untuk model yang tidak ada di dataset
+recommendations = get_recommendations('Smartphone XYZ')
+print("\nRekomendasi ponsel mirip dengan 'Smartphone XYZ':")
+recommendations
+
+"""Sistem memberikan daftar 10 ponsel yang paling mirip dengan model iPhone 13 berdasarkan kemiripan fitur teks (brand, model, operating_system) yang telah diproses menggunakan TF-IDF Vectorizer dan cosine similarity.
 
 #Model Development dengan Collaborative Filtering
 """
@@ -598,10 +613,6 @@ history = model.fit(
      - Memberikan rekomendasi top-N berdasarkan skor prediksi tertinggi.
 """
 
-# Contoh penggunaan fungsi
-print(get_recommendations('iPhone 13'))
-print(get_recommendations('Samsung Galaxy S22 Ultra'))
-
 # Mendapatkan data pengguna acak untuk percobaan rekomendasi
 user_id = df['user_id'].sample(1).iloc[0]
 cellphones_rated_by_user = df[df['user_id'] == user_id]
@@ -652,46 +663,7 @@ print('----' * 8)
 for cellphone_id in recommended_cellphone_ids:
     print(data_cellphone_df.loc[cellphone_id]['model'])
 
-"""### 🎯 Menampilkan Rekomendasi Ponsel untuk Pengguna Tertentu
-
-Bagian ini bertujuan untuk **menguji model rekomendasi** dengan memilih satu pengguna secara acak dan menghasilkan daftar ponsel yang disarankan berdasarkan prediksi model.
-### 🎯 Hasil Rekomendasi Ponsel untuk User ID: 27
-
-Model rekomendasi berbasis Collaborative Filtering berhasil menghasilkan saran ponsel untuk pengguna tertentu berdasarkan preferensi historisnya. Berikut adalah hasilnya:
-
----
-
-#### ✅ Ponsel dengan Rating Tertinggi oleh Pengguna
-Ponsel-ponsel berikut ini merupakan yang paling disukai oleh pengguna berdasarkan histori rating yang telah diberikan:
-
-1. **iPhone 13 Pro Max**
-2. **10T**
-3. **Galaxy A32**
-4. **Moto G Power (2022)**
-5. **Galaxy S22 Plus**
-
----
-
-#### 🤖 Top 10 Rekomendasi Ponsel untuk Pengguna Ini
-Berdasarkan model prediksi, sistem menyarankan ponsel berikut yang belum dirating oleh pengguna, namun diprediksi sangat cocok:
-
-1. **iPhone SE (2022)**
-2. **iPhone 13 Mini**
-3. **iPhone 13**
-4. **iPhone XR**
-5. **Pixel 6 Pro**
-6. **Galaxy S22**
-7. **10 Pro**
-8. **iPhone 13 Pro**
-9. **Find X5 Pro**
-10. **Xperia Pro**
-
----
-
-#### 📌 Insight:
-- Rekomendasi sangat condong ke **brand Apple dan flagship Android** seperti Pixel dan Galaxy, mencerminkan bahwa model telah belajar dari preferensi sebelumnya.
-- Model berhasil menyarankan produk dengan **kemiripan teknis dan popularitas** yang sesuai dengan ponsel yang pernah disukai pengguna.
-- Rekomendasi ini sangat relevan dalam konteks aplikasi e-commerce, sistem katalog, atau layanan konsultasi pembelian ponsel.
+"""kode diatas adalah rekomendasi menggunakan  Collaborative Filtering
 
 #Evaluasi
 """
@@ -759,7 +731,7 @@ plt.show()
 
 #### 🔍 Insight:
 - RMSE pada data pelatihan terus menurun dari awal hingga akhir, menandakan model belajar dengan baik terhadap data historis.
-- RMSE pada data validasi juga menurun secara signifikan pada awal epoch, kemudian stabil di sekitar nilai **0.187–0.189**.
+- RMSE pada data validasi juga menurun secara signifikan pada awal epoch, kemudian stabil di sekitar nilai **0.2087**.
 - Tidak terjadi peningkatan drastis (*spike*) pada RMSE validasi, sehingga **overfitting tidak terdeteksi secara signifikan**.
 """
 
